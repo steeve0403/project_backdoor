@@ -1,17 +1,22 @@
 # ---------- Sockets network : Client ----------
 import socket
+import time
 
 HOST_IP = "127.0.0.1"
 HOST_PORT = 32000
 
-s = socket.socket()
+print(f"Connection at server: {HOST_IP}, port: {HOST_PORT} ....")
+while True:
+    try:
+        s = socket.socket()
 
-try:
-    print(f"Connection at server: {HOST_IP}, port: {HOST_PORT} ....")
-    s.connect((HOST_IP, HOST_PORT))
-except ConnectionRefusedError:
-    print(f"Error : Unable to connect to server.")
-else:
-    print(f"Connected to server.")
+        s.connect((HOST_IP, HOST_PORT))
+    except ConnectionRefusedError:
+        print(f"Error : Unable to connect to server. Reconnection...")
+        time.sleep(4)
+    else:
+        print(f"Connected to server.")
+        break
+
 
 s.close()
