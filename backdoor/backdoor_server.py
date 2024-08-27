@@ -16,12 +16,12 @@ connection_socket, client_address = s.accept()
 print(f"Accepted connection from {client_address}")
 
 while True:
-    text_to_send = input("Your message: ")
-    connection_socket.sendall(text_to_send.encode())
+    command = input("Command: ")
+    connection_socket.sendall(command.encode())
     received_data = connection_socket.recv(MAX_DATA_SIZE)
     if not received_data:
         break
-    print(f"Message received: {received_data.decode()}")
+    print(received_data.decode())
 
 
 s.close()
