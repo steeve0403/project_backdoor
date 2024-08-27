@@ -19,9 +19,19 @@ while True:
         print(f"Connected to server.")
         break
 
-received_data = s.recv(MAX_DATA_SIZE)
-if received_data:
-    print(received_data.decode())
-else:
-    print("No data")
+
+# if received_data:
+#     print(received_data.decode())
+# else:
+#     print("No data")
+
+while True:
+    received_data = s.recv(MAX_DATA_SIZE)
+    if not received_data:
+        break
+    print(f"Message received: {received_data.decode()}")
+    text_to_send = input("Your message: ")
+    s.sendall(text_to_send.encode())
+
+
 s.close()
