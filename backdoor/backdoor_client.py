@@ -34,7 +34,16 @@ while True:
 
     if not response or len(response) == 0:
         response = ""
-    s.sendall(response.encode())
 
+    # HEADER 13 octets -> length octet
+    # DATA (length) octets
+
+    # HEADER 0000003173
+    # DATA 3173 octets
+
+    header = str(len(response.encode())).zfill(13)
+    print(f"Header {header}")
+    s.sendall(header.encode())
+    s.sendall(response.encode())
 
 s.close()
