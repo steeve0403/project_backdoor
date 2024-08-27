@@ -24,6 +24,20 @@ def socket_received_all_data(socket_p, data_len):
 
     return total_data
 
+def socket_send_and_receive_all_data(socket_p, command):
+    if not command: # if command == "":
+        return
+    socket_p.sendall(command.encode())
+
+    header_data = socket_received_all_data(socket_p, 13)
+    length_data = int(header_data.decode())
+
+    data_received = socket_received_all_data(socket_p, length_data)
+    return data_received
+
+
+
+
 s = socket.socket()
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 s.bind((HOST_IP, HOST_PORT))
@@ -34,19 +48,15 @@ connection_socket, client_address = s.accept()
 print(f"Connexion établie avec {client_address}")
 
 while True:
-    command = input("Command: ")
-    if command == "":
-        continue
-    connection_socket.sendall(command.encode())
-
-    header_data = socket_received_all_data(connection_socket, 13)
-    length_data = int(header_data.decode())
-
-    data_received = socket_received_all_data(connection_socket, length_data)
+    infos_data = socket_send_and_receive_all_data(connection_socket, "infos")
+    if not infos_data:
+        break
+    command = input(f"{client_address[0]} : {client_address[1]}  {infos_data.decode()} > ")
+    data_received = socket_send_and_receive_all_data(connection_socket, command)
     if not data_received:
         break
-    print(f"data received: {data_received}")
     print(data_received.decode())
+
 
 s.close()
 connection_socket.close()
