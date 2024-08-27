@@ -12,7 +12,10 @@ while True:
 
     command_split = command.split(" ")
     if len(command_split) == 2 and command_split[0] == "cd":
-        os.chdir(command_split[1])
+        try:
+            os.chdir(command_split[1])
+        except FileNotFoundError:
+            print("Error: No such file or directory")
     else:
         results = subprocess.run(command, shell=True, capture_output=True, universal_newlines=True) # macos command
 
