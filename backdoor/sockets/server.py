@@ -12,3 +12,4 @@ print(f"Waiting for connection on {HOST_IP}, port {HOST_PORT} ....")
 connection_socket, client_address = s.accept()
 print(f"Accepted connection from {client_address}")
 
+s.close()
